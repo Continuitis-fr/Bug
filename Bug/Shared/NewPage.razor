@@ -1,0 +1,42 @@
+﻿@typeparam TDtoItem where TDtoItem : ClassLibrary.DtoItem
+@typeparam TRepository where TRepository : ClassLibrary.IRepository<TDtoItem>
+@*@typeparam TRepository where TRepository : IRepository<TDtoItem>
+    where TDtoItem : DtoItem*@
+
+@if (isLoading)
+{
+    <SpinnerStartRoundCircle/>
+}
+else
+{
+    @ElementTemplate(item)
+}
+
+@code {
+    [EditorRequired]
+	[Parameter] public TRepository Repository { get; set; }
+    [EditorRequired]
+    [Parameter] public RenderFragment<TDtoItem> ElementTemplate { get; set; }
+    [SupplyParameterFromQuery]
+	[Parameter] public Guid? Id { get; set; }
+    [Parameter] public EventCallback<TDtoItem> InitAsync { get; set; }
+    bool isLoading = true;
+    private TDtoItem? item = null;
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue)
+        {
+            item = await Repository.GetAsync(Id.Value);
+        }
+        else
+        {
+           @* item = new();*@
+        }
+        if (InitAsync.HasDelegate)
+        {
+            await InitAsync.InvokeAsync(item);
+        }
+        isLoading = false;
+    }
+
+}

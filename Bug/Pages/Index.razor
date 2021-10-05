@@ -1,5 +1,5 @@
 ﻿@page "/"
-
+@inject IRepository<MyDtoItem> myRepo
 <PageTitle>Index</PageTitle>
 
 <h1>Hello, world!</h1>
@@ -7,3 +7,9 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+<NewPage Repository="myRepo" >
+    <ElementTemplate Context="myRepo">
+        <p>Hey why is it failing?</p>
+    </ElementTemplate>
+</NewPage>
